@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Dashboard - Upload Lesson</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .content {
+      flex: 1;
+    }
+    .navbar {
+      background-color: #0056b3;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-brand {
+      font-weight: bold;
+      color: white !important;
+    }
+    .nav-link {
+      color: white !important;
+      background-color: green;
+      border-radius: 5px;
+      padding: 5px 10px;
+      margin: 0 5px;
+      transition: all 0.3s ease-in-out;
+    }
+    .nav-link:hover {
+      text-decoration: underline;
+      background-color: darkgreen;
+      transform: scale(1.1);
+    }
+    .dashboard-section {
+      padding: 40px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    footer {
+      background-color: #0056b3;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      margin-top: auto;
+    }
+    /* Card styles for lesson list */
+    .lesson-card {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img src="/static/logo.jpeg" alt="Islamic Online" style="height: 40px; margin-right: 10px;"> Islamic Online
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="/login">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Main Content -->
+  <div class="container mt-5 content">
+    <h1 class="text-center mb-4">Teacher Dashboard</h1>
+    <div class="dashboard-section mb-4">
+      <h3>Add Lesson Video & Files</h3>
+      <!-- Inaan ku darno select-ka Unit si aad u doorato Unit 1, 2, 3, iwm. -->
+      <label>Unit:</label>
+      <select class="form-control mb-3" id="lesson_unit">
+        <option value="1">Unit 1</option>
+        <option value="2">Unit 2</option>
+        <option value="3">Unit 3</option>
+      </select>
+      <input type="text" class="form-control mb-3" id="lesson_title" placeholder="Enter Lesson Title" required>
+      <select id="lesson_level" class="form-control mb-3">
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="upper_intermediate">Upper Intermediate</option>
+        <option value="advanced">Advanced</option>
+      </select>
+      <input type="file" id="lesson_video" accept="video/*" class="form-control mb-3">
+  
+      <label>Exercise 1 (PDF/DOCX):</label>
+      <input type="file" id="exercise_file1" accept=".pdf,.docx" class="form-control mb-3">
+      <label>Exercise 2 (PDF/DOCX):</label>
+      <input type="file" id="exercise_file2" accept=".pdf,.docx" class="form-control mb-3">
+      <label>Exercise 3 (PDF/DOCX):</label>
+      <input type="file" id="exercise_file3" accept=".pdf,.docx" class="form-control mb-3">
+      
+      <label>First Exam (PDF/DOCX):</label>
+      <input type="file" id="first_exam" accept=".pdf,.docx" class="form-control mb-3">
+      <label>Second Exam (PDF/DOCX):</label>
+      <input type="file" id="second_exam" accept=".pdf,.docx" class="form-control mb-3">
+      <label>Final Exam (PDF/DOCX):</label>
+      <input type="file" id="final_exam" accept=".pdf,.docx" class="form-control mb-3">
+  
+      <button class="btn btn-primary" onclick="uploadLesson()">Upload Lesson</button>
+    </div>
+    
+    <!-- Lesson List: Liiska casharada la soo geliyay -->
+    <div class="dashboard-section">
+      <h3>Uploaded Lessons</h3>
+      <div id="lessonList"></div>
+    </div>
+  </div>
+  
+  <footer>
+    <p>&copy; 2025 Islamic Online. All rights reserved.</p>
+  </footer>
+  
+  <!-- Bootstrap Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Upload lesson adigoon wax backend ah isticmaalin: isticmaala localStorage
+    function uploadLesson() {
+      let lessonUnit = document.getElementById("lesson_unit").value;
+      let lessonTitle = document.getElementById("lesson_title").value.trim();
+      let lessonLevel = document.getElementById("lesson_level").value;
+      let videoFile = document.getElementById("lesson_video").files[0];
+      let exerciseFile1 = document.getElementById("exercise_file1").files[0];
+      let exerciseFile2 = document.getElementById("exercise_file2").files[0];
+      let exerciseFile3 = document.getElementById("exercise_file3").files[0];
+      let firstExamFile = document.getElementById("first_exam").files[0];
+      let secondExamFile = document.getElementById("second_exam").files[0];
+      let finalExamFile = document.getElementById("final_exam").files[0];
+  
+      if (!lessonTitle || !lessonLevel || !videoFile || !exerciseFile1 || !exerciseFile2 || !exerciseFile3 ||
+          !firstExamFile || !secondExamFile || !finalExamFile) {
+          alert("Please fill all fields and upload all files!");
+          return;
+      }
+      
+      // Inaan kaydino kaliya magaca file-ka (ama URL-ga) sababtoo ah ma hayno backend
+      let lesson = {
+        unit: lessonUnit,
+        title: lessonTitle,
+        level: lessonLevel,
+        video: videoFile.name,
+        exercise1: exerciseFile1.name,
+        exercise2: exerciseFile2.name,
+        exercise3: exerciseFile3.name,
+        firstExam: firstExamFile.name,
+        secondExam: secondExamFile.name,
+        finalExam: finalExamFile.name
+      };
+  
+      // Hel casharada horey u kaydsan ama abuur array cusub
+      let lessons = JSON.parse(localStorage.getItem("lessons")) || [];
+      lessons.push(lesson);
+      localStorage.setItem("lessons", JSON.stringify(lessons));
+  
+      alert("Lesson uploaded successfully!");
+      clearForm();
+      displayLessons();
+    }
+    
+    // Function si uu u nadiifiyo form-ka kadib upload
+    function clearForm() {
+      document.getElementById("lesson_title").value = "";
+      document.getElementById("lesson_video").value = "";
+      document.getElementById("exercise_file1").value = "";
+      document.getElementById("exercise_file2").value = "";
+      document.getElementById("exercise_file3").value = "";
+      document.getElementById("first_exam").value = "";
+      document.getElementById("second_exam").value = "";
+      document.getElementById("final_exam").value = "";
+    }
+    
+    // Function si uu u soo bandhigo liiska casharada la keydiyay, isagoo kala saaraya unit-ka
+    function displayLessons() {
+      let lessons = JSON.parse(localStorage.getItem("lessons")) || [];
+      let lessonListDiv = document.getElementById("lessonList");
+      lessonListDiv.innerHTML = "";
+      
+      // Kala saar casharada unit ahaan
+      let units = {};
+      lessons.forEach(lesson => {
+        if (!units[lesson.unit]) {
+          units[lesson.unit] = [];
+        }
+        units[lesson.unit].push(lesson);
+      });
+      
+      for (let unit in units) {
+        let unitHeader = document.createElement("h4");
+        unitHeader.innerText = "Unit " + unit;
+        lessonListDiv.appendChild(unitHeader);
+        
+        units[unit].forEach(lesson => {
+          let card = document.createElement("div");
+          card.className = "card lesson-card";
+          let cardBody = document.createElement("div");
+          cardBody.className = "card-body";
+  
+          let titleEl = document.createElement("h5");
+          titleEl.className = "card-title";
+          titleEl.innerText = lesson.title;
+  
+          let levelEl = document.createElement("p");
+          levelEl.className = "card-text";
+          levelEl.innerText = "Level: " + lesson.level;
+  
+          // Liiska file-yada (video, exercises, exams)
+          let listEl = document.createElement("ul");
+          listEl.className = "list-group list-group-flush";
+  
+          let videoItem = document.createElement("li");
+          videoItem.className = "list-group-item";
+          videoItem.innerText = "Video: " + lesson.video;
+          listEl.appendChild(videoItem);
+  
+          let ex1Item = document.createElement("li");
+          ex1Item.className = "list-group-item";
+          ex1Item.innerText = "Exercise 1: " + lesson.exercise1;
+          listEl.appendChild(ex1Item);
+  
+          let ex2Item = document.createElement("li");
+          ex2Item.className = "list-group-item";
+          ex2Item.innerText = "Exercise 2: " + lesson.exercise2;
+          listEl.appendChild(ex2Item);
+  
+          let ex3Item = document.createElement("li");
+          ex3Item.className = "list-group-item";
+          ex3Item.innerText = "Exercise 3: " + lesson.exercise3;
+          listEl.appendChild(ex3Item);
+  
+          let exam1Item = document.createElement("li");
+          exam1Item.className = "list-group-item";
+          exam1Item.innerText = "First Exam: " + lesson.firstExam;
+          listEl.appendChild(exam1Item);
+  
+          let exam2Item = document.createElement("li");
+          exam2Item.className = "list-group-item";
+          exam2Item.innerText = "Second Exam: " + lesson.secondExam;
+          listEl.appendChild(exam2Item);
+  
+          let finalExamItem = document.createElement("li");
+          finalExamItem.className = "list-group-item";
+          finalExamItem.innerText = "Final Exam: " + lesson.finalExam;
+          listEl.appendChild(finalExamItem);
+  
+          cardBody.appendChild(titleEl);
+          cardBody.appendChild(levelEl);
+          cardBody.appendChild(listEl);
+          card.appendChild(cardBody);
+          lessonListDiv.appendChild(card);
+        });
+      }
+    }
+    
+    // Marka boggu load-garo, soo bandhig casharada hore loo keydiyay
+    window.onload = function() {
+      displayLessons();
+    }
+  </script>
+</body>
+</html>

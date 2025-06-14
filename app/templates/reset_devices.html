@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reset Devices</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #e0f7fa, #fff);
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background: linear-gradient(90deg, #0056b3, #007bff);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-brand {
+      color: #fff !important;
+      font-weight: 700;
+    }
+    .nav-link {
+      color: #fff !important;
+      background-color: #28a745;
+      border-radius: 5px;
+      padding: 8px 12px;
+      margin: 0 5px;
+      font-weight: 500;
+      transition: all 0.3s ease-in-out;
+    }
+    .nav-link:hover {
+      text-decoration: underline;
+      background-color: darkgreen;
+      transform: scale(1.1);
+    }
+    /* Content and Quiz Section Styling */
+    .content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .quiz-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      animation: fadeInUp 1s ease-out;
+      max-width: 800px;
+      width: 100%;
+      margin: 20px 0;
+    }
+    /* Content Container */
+    .content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .quiz-section {
+      background: rgba(255,255,255,0.95);
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+      max-width: 800px;
+      width: 100%;
+    }
+    .hero-section {
+      position: relative;
+      height: 70vh;
+      overflow: hidden;
+    }
+    .carousel-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+    .hero-content {
+      position: absolute;
+      z-index: 2;
+      text-align: center;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      padding: 20px;
+    }
+    .hero-content h1 {
+      font-size: 3rem;
+      font-weight: 700;
+    }
+    .about-section {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 40px;
+      margin: -60px auto 60px auto;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      position: relative;
+      text-align: center;
+    }
+    .about-section h2 {
+      font-weight: 700;
+      color: #0056b3;
+    }
+    footer {
+      background-color: #0056b3;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+    }
+    /* Increase font size and bold text for input fields */
+    .form-control {
+      background: rgba(255, 255, 255, 0.25);
+      border: none;
+      border-radius: 10px;
+      padding: 12px 15px;
+      color: #fff;
+      font-size: 18px; /* Increased font size */
+      font-weight: bold; /* Bold text */
+      transition: all 0.3s ease;
+    }
+    .form-control::placeholder {
+      color: #e0e0e0;
+      font-style: italic;
+    }
+    .form-control:focus {
+      background: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img src="/static/logo.jpeg" alt="Islamic Online" style="height: 40px; margin-right: 10px;">
+        Islamic Online University Borama
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/login">Back Login</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Main Content -->
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <!-- Flash Alert Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        
+        <div class="card shadow">
+          <div class="card-body">
+            <h2 class="card-title mb-4 text-center">Reset Devices</h2>
+            <p>Please enter your email and password to reset your device list. Once reset, you will receive a notification email.</p>
+            <form method="POST">
+              {{ form.hidden_tag() }}
+              <div class="mb-3">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control", placeholder="Enter your email") }}
+              </div>
+              <div class="mb-3">
+                {{ form.password.label(class="form-label") }}
+                <!-- Wrap password field in an input group with eye icon similar to login -->
+                <div class="input-group">
+                  {{ form.password(class="form-control", placeholder="Enter your password", id="passwordField") }}
+                  <span class="input-group-text" id="togglePassword" style="cursor: pointer;">&#128065;</span>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Reset Devices</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Islamic Online University. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Password Toggle Script -->
+  <script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const passwordField = document.querySelector('#passwordField');
+
+    // Toggle password visibility on hover or click (here using click)
+    togglePassword.addEventListener('click', function () {
+      const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordField.setAttribute('type', type);
+      // Optionally, change the icon (if desired)
+      // this.innerHTML = type === 'password' ? '&#128065;' : '&#128066;';
+    });
+  </script>
+</body>
+</html>

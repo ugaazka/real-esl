@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% set exam_type = exam_type or "exercise" %}
+{# exam_type: "exercise", "midterm1", "midterm2", ama "finalExam" #}
+
+{% block title %}
+  {% if exam_type == "exercise" %}
+    Quiz Question - {{ exercise.title }}
+  {% elif exam_type == "midterm1" %}
+    Midterm One Quiz
+  {% elif exam_type == "midterm2" %}
+    Midterm Two Quiz
+  {% elif exam_type == "finalExam" %}
+    Final Exam Quiz
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+  <div class="card shadow-sm p-4 mx-auto" style="max-width: 800px;">
+    {% if exam_type == "exercise" %}
+      <h3 id="quizTitle" class="card-title">{{ exercise.title }}</h3>
+    {% elif exam_type == "midterm1" %}
+      <h3 id="quizTitle" class="card-title">Midterm One Quiz</h3>
+    {% elif exam_type == "midterm2" %}
+      <h3 id="quizTitle" class="card-title">Midterm Two Quiz</h3>
+    {% elif exam_type == "finalExam" %}
+      <h3 id="quizTitle" class="card-title">Final Exam Quiz</h3>
+    {% endif %}
+
+    <!-- Question Display -->
+    <h4 class="mt-3">Question:</h4>
+    <p id="question-text" class="text-start fw-bold">Loading question...</p>
+
+    <!-- Answer Options -->
+    <div id="options-container"></div>
+
+    <!-- Navigation Buttons -->
+    <div class="d-flex justify-content-between mt-4">
+      <button id="prevBtn" class="btn btn-secondary" style="display: none;">Previous</button>
+      <button id="next-button" class="btn btn-primary">Next</button>
+      <button id="submitBtn" class="btn btn-success" style="display: none;">Submit</button>
+    </div>
+
+    <!-- Question Navigation Links -->
+    <div id="question-nav" class="mt-4"></div>
+
+    <p id="progressText" class="mt-3"></p>
+
+    <a href="unit1" class="btn btn-primary mt-3">Back to Lesson</a>
+  </div>
+</div>
+
+<!-- Embedded JSON Data -->
+<script id="questionsData" type="application/json">
+{
+  "unit1": {
+    "lesson1": {
+      "exercises": {
+        "fill_in_blank": [
+          { "question": "I ___ a student.", "correctAnswer": "am" },
+          { "question": "He ___ a teacher.", "correctAnswer": "is" },
+          { "question": "They ___ playing football.", "correctAnswer": "are" }
+        ],
+        "matching": [
+          { "instruction": "Match the words with their meanings.", "left": ["Happy", "Sad", "Angry"], "right": ["feeling good", "feeling bad", "feeling angry"] }
+        ],
+        "drag_drop": [
+          { "instruction": "Arrange the words to form a sentence: 'I love to read books.'", "items": ["books", "I", "love", "to", "read"], "correctOrder": ["I", "love", "to", "read", "books"] }
+        ]
+      }
+    },
+    "lesson2": {
+      "exercises": {
+        "fill_in_blank": [
+          { "question": "Lesson 2: I ___ a teacher.", "correctAnswer": "am" }
+        ],
+        "matching": [],
+        "drag_drop": []
+      }
+    }
+    // Ku dar casharo kale sida loo baahdo...
+  }
+}
+</script>
+
+<script>
+  // --- Qaybta Qaadashada URL Parameters ---
+  const urlParams = new URLSearchParams(window.location.search);
+  // Halkan unit, lesson, iyo exercise waxaa laga heli karaa URL-ka: ?unit=1&lesson=1&exercise=fill_in_blank
+  const unit = urlParams.get('unit') || "1";
+  const lesson = urlParams.get('lesson') || "1";
+  const exerciseType = urlParams.get('exercise') || "fill_in_blank";
+
+  // --- Akhrinta JSON Data ---
+  const questionsJson = document.getElementById('questionsData').textContent;
+  const allData = JSON.parse(questionsJson);
+  const unitKey = "unit" + unit;
+  const lessonKey = "lesson" + lesson;
+  let questions = [];
+  if(allData[unitKey] && allData[unitKey][lessonKey] && allData[unitKey][lessonKey].exercises[exerciseType]){
+    questions = allData[unitKey][lessonKey].exercises[exerciseType];
+  }
+
+  let currentQuestionIndex = 0;
+
+  // --- Function-ka Soo Bandhigida Su'aasha ---
+  function showQuestion() {
+    const questionText = document.getElementById("question-text");
+    const optionsContainer = document.getElementById("options-container");
+    optionsContainer.innerHTML = "";
+
+    if (currentQuestionIndex >= questions.length) {
+      questionText.innerText = "End of the quiz!";
+      document.getElementById("next-button").style.display = "none";
+      return;
+    }
+
+    const question = questions[currentQuestionIndex];
+    // Haddii su'aalaha qaarkood ay isticmaalaan "question" ama "instruction"
+    questionText.innerText = question.question || question.instruction;
+
+    // Tusaale ahaan, haddii ay fill in the blank yihiin (waxaa jira "correctAnswer")
+    if (question.correctAnswer) {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.classList.add("form-control", "mt-2");
+      optionsContainer.appendChild(input);
+    }
+    // Haddii ay yihiin matching (waxaa jira "left" iyo "right")
+    else if (question.left && question.right) {
+      question.left.forEach((item, index) => {
+        const pair = document.createElement("div");
+        pair.innerHTML = `<strong>${item}</strong> - ${question.right[index]}`;
+        optionsContainer.appendChild(pair);
+      });
+    }
+    // Haddii ay yihiin drag and drop (waxaa jira "items")
+    else if (question.items) {
+      // Abuur container-ka draggable
+      const dragContainer = document.createElement("div");
+      dragContainer.classList.add("drag-container", "mb-3");
+      question.items.forEach(item => {
+        const draggable = document.createElement("div");
+        draggable.innerText = item;
+        draggable.classList.add("draggable", "btn", "btn-outline-secondary", "m-1");
+        draggable.draggable = true;
+        draggable.addEventListener("dragstart", dragStart);
+        dragContainer.appendChild(draggable);
+      });
+      // Abuur container-ka drop zones, iyadoo la adeegsanayo xogta "correctOrder" si tusaale ahaan
+      const dropContainer = document.createElement("div");
+      dropContainer.classList.add("drag-container", "border", "p-3");
+      if (question.correctOrder) {
+        question.correctOrder.forEach(() => {
+          const dropZone = document.createElement("div");
+          dropZone.classList.add("drop-zone", "m-1", "p-2");
+          dropZone.innerText = "______";
+          dropZone.addEventListener("dragover", allowDrop);
+          dropZone.addEventListener("drop", drop);
+          dropContainer.appendChild(dropZone);
+        });
+      }
+      optionsContainer.appendChild(dragContainer);
+      optionsContainer.appendChild(dropContainer);
+    }
+
+    updateQuestionNav();
+  }
+
+  // --- Navigation Functions ---
+  function createQuestionNav() {
+    const navContainer = document.getElementById("question-nav");
+    navContainer.innerHTML = "<strong>Jump to question:</strong> ";
+    for (let i = 0; i < questions.length; i++) {
+      const link = document.createElement("a");
+      link.href = "#";
+      link.innerText = i + 1;
+      link.style.margin = "0 5px";
+      link.dataset.index = i;
+      link.onclick = (e) => {
+        e.preventDefault();
+        currentQuestionIndex = parseInt(e.target.dataset.index);
+        showQuestion();
+      };
+      navContainer.appendChild(link);
+    }
+  }
+
+  function updateQuestionNav() {
+    const navContainer = document.getElementById("question-nav");
+    const links = navContainer.getElementsByTagName("a");
+    for (let i = 0; i < links.length; i++) {
+      links[i].style.fontWeight = (i === currentQuestionIndex) ? "bold" : "normal";
+      links[i].style.textDecoration = (i === currentQuestionIndex) ? "underline" : "none";
+    }
+  }
+
+  // --- Drag and Drop Handlers ---
+  function dragStart(event) {
+    event.dataTransfer.setData("text", event.target.innerText);
+  }
+  function allowDrop(event) {
+    event.preventDefault();
+  }
+  function drop(event) {
+    event.preventDefault();
+    const data = event.dataTransfer.getData("text");
+    event.target.innerText = data;
+  }
+
+  // --- Button Event Listeners ---
+  document.getElementById("next-button").addEventListener("click", () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      currentQuestionIndex++;
+      showQuestion();
+    }
+  });
+  document.getElementById("prevBtn").addEventListener("click", () => {
+    if (currentQuestionIndex > 0) {
+      currentQuestionIndex--;
+      showQuestion();
+    }
+  });
+
+  // Haddii ay jiraan su'aalo, samee navigation ka hor inta aan la soo bandhigin su'aasha ugu horeysa
+  if (questions.length > 0) {
+    createQuestionNav();
+    showQuestion();
+  } else {
+    document.getElementById("question-text").innerText = "No questions found for this exercise.";
+    document.getElementById("next-button").style.display = "none";
+  }
+</script>
+{% endblock %}

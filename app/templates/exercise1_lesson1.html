@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quiz - Single Page with Results</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    /* Animated Gradient BG + Basic Styles */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(45deg, #1e3c72, #2a5298, #4e54c8);
+      background-size: 600% 600%;
+      animation: gradientBG 15s ease infinite;
+    }
+    @keyframes gradientBG {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .navbar {
+      background-color: rgba(0, 86, 179, 0.9);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .navbar-brand, .nav-link {
+      color: #fff !important;
+    }
+    .nav-link {
+        color: white !important;
+        background-color: #28a745;
+        border-radius: 5px;
+        padding: 8px 12px;
+        margin: 0 5px;
+        transition: all 0.3s ease-in-out;
+      }
+      .nav-link:hover {
+        text-decoration: underline;
+        background-color: darkgreen;
+        transform: scale(1.1);
+      }
+  
+      /* Content and Quiz Section Styling */
+      .content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+      .quiz-section {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 40px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        animation: fadeInUp 1s ease-out;
+        max-width: 800px;
+        width: 100%;
+        margin: 20px 0;
+      }
+    .content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .quiz-container {
+      background: rgba(255,255,255,0.95);
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+      max-width: 800px;
+      width: 100%;
+    }
+    .question-area {
+      margin-bottom: 20px;
+    }
+    .question-count {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 5px;
+    }
+    .btn {
+      margin-right: 8px;
+    }
+    .correct {
+      background-color: #d4edda !important;
+    }
+    .incorrect {
+      background-color: #f8d7da !important;
+    }
+    #score-area {
+        margin-top: 20px; 
+        padding: 15px; 
+        border-radius: 8px;
+        display: none; /* start hidden */
+      }
+      .highlight-correct {
+        color: green; 
+        font-weight: bold;
+      }
+      .highlight-incorrect {
+        color: red; 
+        font-weight: bold;
+      }
+      footer {
+        background-color: rgba(0, 86, 179, 0.9);
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+      }
+  </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+          <a class="navbar-brand" href="#">
+            <img src="/static/logo.jpeg" alt="Islamic Online" style="height: 40px; margin-right: 10px;">
+            Islamic Online
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                  data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" 
+                  aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+              <li class="nav-item"><a class="nav-link" href="/unit1">Back Lesson</a></li>
+              <li class="nav-item"><a class="nav-link" href="/login">Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+  <div class="content">
+    <div class="quiz-container">
+      <h3 class="mb-3">Multiple Choice Quiz (15 questions)</h3>
+
+      <!-- Single question UI -->
+      <div class="question-area">
+        <div class="question-count" id="question-count"></div>
+        <h5 id="question-prompt"></h5>
+        <select id="question-select" class="form-select mt-2">
+          <!-- dynamically filled -->
+        </select>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div>
+        <button class="btn btn-secondary" onclick="prevQuestion()">Previous</button>
+        <button class="btn btn-primary" onclick="nextQuestion()">Next</button>
+        <button class="btn btn-success" id="finishBtn" onclick="finishQuiz()" style="display:none;">Finish</button>
+      </div>
+
+      <!-- Score / Results Area (Shown after "Finish") -->
+      <div id="score-area" class="bg-light">
+        <h4>Results</h4>
+        <p id="score-summary"></p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Islamic Online. All rights reserved.</p>
+  </footer>
+
+  <script>
+    /*=============================
+      Quiz Data 
+    =============================*/
+    const questions = [
+      {
+        prompt: "Q1: Which city is the holiest in Islam?",
+        options: ["Makkah", "Madinah", "Jerusalem", "Riyadh"],
+        correct: "Makkah"
+      },
+      {
+        prompt: "Q2: The best time to pray Fajr is...",
+        options: ["After sunrise", "Before sunrise", "Afternoon", "Just after Dhuhr"],
+        correct: "Before sunrise"
+      },
+      {
+        prompt: "Q3: Which Pillar of Islam is second after Shahadah?",
+        options: ["Hajj", "Zakah", "Salah", "Sawm"],
+        correct: "Salah"
+      },
+      {
+        prompt: "Q4: The word 'Qur'an' means...",
+        options: ["The Book", "The Recitation", "The Scripture", "The Guidance"],
+        correct: "The Recitation"
+      },
+      {
+        prompt: "Q5: Zakah is an obligation of giving what percentage (approx.)?",
+        options: ["1%", "2.5%", "10%", "20%"],
+        correct: "2.5%"
+      },
+      {
+        prompt: "Q6: Which city is known as the City of the Prophet?",
+        options: ["Makkah", "Madinah", "Jerusalem", "Baghdad"],
+        correct: "Madinah"
+      },
+      {
+        prompt: "Q7: Which month is fasting (Sawm) obligatory?",
+        options: ["Rajab", "Shaban", "Ramadan", "Shawwal"],
+        correct: "Ramadan"
+      },
+      {
+        prompt: "Q8: The direction Muslims face in prayer is called the...",
+        options: ["Mihrab", "Qiblah", "Minbar", "Haram"],
+        correct: "Qiblah"
+      },
+      {
+        prompt: "Q9: Which prophet received the Torah (Tawrat)?",
+        options: ["Prophet Musa", "Prophet Isa", "Prophet Dawud", "Prophet Muhammad"],
+        correct: "Prophet Musa"
+      },
+      {
+        prompt: "Q10: Hajj is performed in which Islamic month?",
+        options: ["Muharram", "Dhul Hijjah", "Shawwal", "Rajab"],
+        correct: "Dhul Hijjah"
+      },
+      {
+        prompt: "Q11: Which day is considered the weekly special congregational prayer day?",
+        options: ["Monday", "Thursday", "Friday", "Sunday"],
+        correct: "Friday"
+      },
+      {
+        prompt: "Q12: The language of the Qur'an is...",
+        options: ["Arabic", "English", "Hebrew", "Latin"],
+        correct: "Arabic"
+      },
+      {
+        prompt: "Q13: The name 'Allah' means...",
+        options: ["The Creator", "The Only True God", "The Cherisher", "All of the above"],
+        correct: "All of the above"
+      },
+      {
+        prompt: "Q14: 'Sunnah' refers to the teachings and practices of...",
+        options: ["Prophet Ibrahim", "Prophet Musa", "Prophet Isa", "Prophet Muhammad"],
+        correct: "Prophet Muhammad"
+      },
+      {
+        prompt: "Q15: The word 'Islam' means...",
+        options: ["Peace", "Submission", "Obedience to God", "All of these"],
+        correct: "All of these"
+      }
+    ];
+
+    let userAnswers = new Array(questions.length).fill("");
+    let currentIndex = 0;
+    // We use an "attempt" variable: 1 = first time finishing, 2 = second time => show correct if still wrong
+    let attempt = 1;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadQuestion(currentIndex);
+    });
+
+    function loadQuestion(i) {
+      const q = questions[i];
+      document.getElementById("question-prompt").textContent = q.prompt;
+      document.getElementById("question-count").textContent = `Question ${i+1} of ${questions.length}`;
+
+      // Fill select
+      const sel = document.getElementById("question-select");
+      sel.innerHTML = "";
+
+      // placeholder
+      const optPh = document.createElement("option");
+      optPh.value = "";
+      optPh.textContent = "-- Choose an answer --";
+      sel.appendChild(optPh);
+
+      q.options.forEach(opt => {
+        const op = document.createElement("option");
+        op.value = opt;
+        op.textContent = opt;
+        sel.appendChild(op);
+      });
+
+      // set previously chosen if any
+      sel.value = userAnswers[i] || "";
+
+      // show/hide finish if last question
+      if (i === questions.length - 1) {
+        document.getElementById("finishBtn").style.display = "inline-block";
+      } else {
+        document.getElementById("finishBtn").style.display = "none";
+      }
+    }
+
+    function nextQuestion() {
+      saveAnswer();
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        loadQuestion(currentIndex);
+      }
+    }
+
+    function prevQuestion() {
+      saveAnswer();
+      if (currentIndex > 0) {
+        currentIndex--;
+        loadQuestion(currentIndex);
+      }
+    }
+
+    function saveAnswer() {
+      const sel = document.getElementById("question-select");
+      userAnswers[currentIndex] = sel.value;
+    }
+
+    function finishQuiz() {
+      // Save the last
+      saveAnswer();
+      checkAnswers();
+    }
+
+    function checkAnswers() {
+      let correctCount = 0;
+      let total = questions.length;
+      // We'll create an array that says whether each Q is correct or not
+      let correctnessArray = [];
+
+      for (let i = 0; i < total; i++) {
+        let userAns = (userAnswers[i] || "").trim().toLowerCase();
+        let correctAns = questions[i].correct.trim().toLowerCase();
+        let isCorrect = (userAns === correctAns);
+        if (isCorrect) {
+          correctCount++;
+        }
+        correctnessArray.push(isCorrect);
+      }
+
+      // Display result
+      const scoreArea = document.getElementById("score-area");
+      scoreArea.style.display = "block";
+
+      const summary = document.getElementById("score-summary");
+
+      if (attempt === 1) {
+        // FIRST attempt: highlight how many correct, but do NOT reveal the correct answers if wrong
+        summary.innerHTML = `
+          You got <strong>${correctCount}</strong> out of <strong>${total}</strong> correct on this first attempt.
+          <br/>
+          The incorrect answers are highlighted in red. Please fix them, then click Finish again.
+        `;
+
+        // highlight user choices
+        highlightAnswers(correctnessArray, /*revealCorrect=*/false);
+
+        attempt = 2; // now we wait for the user to fix the incorrect ones
+      } else {
+        // SECOND attempt: reveal correct answers for any still wrong
+        summary.innerHTML = `
+          Final check: You got <strong>${correctCount}</strong> out of <strong>${total}</strong>.
+          <br/>
+          The answers still wrong are now filled with the correct ones.
+        `;
+
+        highlightAnswers(correctnessArray, /*revealCorrect=*/true);
+
+        // We can also disable next/previous if we want:
+        // document.querySelectorAll("button").forEach(b => b.disabled = true);
+      }
+    }
+
+    // highlightAnswers => 
+    //   correctnessArray[i] = true/false 
+    //   if revealCorrect = true, for any false, we set userAnswers[i] = questions[i].correct
+    //   Then if user navigates to that question, we show it as green, etc.
+    function highlightAnswers(correctnessArray, revealCorrect) {
+      // We'll forcibly set userAnswers for ones still wrong
+      for (let i = 0; i < questions.length; i++) {
+        if (!correctnessArray[i] && revealCorrect) {
+          // fill correct answer
+          userAnswers[i] = questions[i].correct;
+        }
+      }
+      // Now if user navigates, loadQuestion() will see userAnswers for them
+      // We can do an immediate "reload" of the current question to show highlight
+      loadQuestion(currentIndex);
+
+      // Also we can highlight the select box color if we want
+      // But we only highlight the "current" question's select, 
+      // or we do a trick to highlight all if they were visible. 
+      // Because we show only one question at a time, we can do:
+      highlightCurrentQuestion(correctnessArray[currentIndex]);
+    }
+
+    // highlightCurrentQuestion => color the select based on correct/incorrect
+    function highlightCurrentQuestion(isCorrect) {
+      const sel = document.getElementById("question-select");
+      if (isCorrect) {
+        sel.classList.add("correct");
+        sel.classList.remove("incorrect");
+      } else {
+        sel.classList.add("incorrect");
+        sel.classList.remove("correct");
+      }
+    }
+
+    // We'll also add an event so that every time we switch question,
+    // we highlight it properly according to correctnessArray
+    // but we can't do that easily without a global correctness array
+    // or we re-check that question alone. For simplicity,
+    // we do a quick re-check for the current question whenever we load it:
+    document.addEventListener("visibilitychange", () => {
+      // not so relevant
+    });
+
+    // Actually let's do a small hack: whenever we load a question, re-check that single question
+    function loadQuestion(i) {
+      const q = questions[i];
+      document.getElementById("question-prompt").textContent = q.prompt;
+      document.getElementById("question-count").textContent = `Question ${i+1} of ${questions.length}`;
+
+      // Fill select
+      const sel = document.getElementById("question-select");
+      sel.innerHTML = "";
+
+      const optPh = document.createElement("option");
+      optPh.value = "";
+      optPh.textContent = "-- Choose an answer --";
+      sel.appendChild(optPh);
+
+      q.options.forEach(opt => {
+        const op = document.createElement("option");
+        op.value = opt;
+        op.textContent = opt;
+        sel.appendChild(op);
+      });
+      sel.value = userAnswers[i] || "";
+
+      // show/hide finish
+      if (i === questions.length - 1) {
+        document.getElementById("finishBtn").style.display = "inline-block";
+      } else {
+        document.getElementById("finishBtn").style.display = "none";
+      }
+
+      // Re-check just this question if we are in attempt >= 1
+      if (attempt >= 1) {
+        // is it correct?
+        const userAns = (userAnswers[i] || "").trim().toLowerCase();
+        const correctAns = questions[i].correct.trim().toLowerCase();
+        const isCorrect = (userAns === correctAns);
+
+        if (!userAns) {
+          // no answer => remove both classes
+          sel.classList.remove("correct", "incorrect");
+        } else if (isCorrect) {
+          sel.classList.add("correct");
+          sel.classList.remove("incorrect");
+        } else {
+          sel.classList.add("incorrect");
+          sel.classList.remove("correct");
+        }
+      }
+    }
+  </script>
+</body>
+</html>

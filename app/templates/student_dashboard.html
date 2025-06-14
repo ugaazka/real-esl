@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    /* Global Animated Gradient Background */
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .background-carousel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .background-carousel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      transition: opacity 1s ease-in-out;
+    }
+    @keyframes gradientBG {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Navbar Styles with Fade-in Animation */
+    .navbar {
+      background-color: rgba(0, 86, 179, 0.9);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      animation: fadeDown 0.8s ease-out;
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .navbar-brand {
+      font-weight: bold;
+      color: #fff !important;
+    }
+    .nav-link {
+      color: #fff !important;
+      background-color: #28a745;
+      border-radius: 5px;
+      padding: 8px 12px;
+      margin: 0 5px;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .nav-link:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+    }
+
+    /* Content and Dashboard Section */
+    .content {
+      flex: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 50px;
+      
+    }
+    .dashboard-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      animation: fadeInUp 1s ease-out;
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Level Boxes Grid */
+    .level-boxes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .level-box {
+      position: relative;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      font-size: 1.5rem;
+      font-weight: bold;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+    }
+    .level-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+    /* Different level colors */
+    .level-box[data-level='beginner'] {
+      background-color: #28a745;
+      color: white;
+      position: fixed:
+    }
+    .level-box[data-level='intermediate'] {
+      background-color: #17a2b8;
+      color: white;
+      padding;fixed
+    }
+    .level-box[data-level='upper-intermediate'] {
+      background-color: #ffc107;
+      color: black;
+    }
+    .level-box[data-level='advanced'] {
+      background-color: #dc3545;
+      color: white;
+    }
+    /* Animated overlay for level boxes on hover */
+    .level-box::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: skewX(-45deg);
+      transition: left 0.5s;
+    }
+    .level-box:hover::after {
+      left: 100%;
+    }
+
+    /* Footer Styles */
+    footer {
+      background-color: rgba(0, 86, 179, 0.9);
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      margin-top: auto;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 576px) {
+      .dashboard-section {
+        padding: 30px 20px;
+      }
+      .nav-link {
+        margin: 0 3px;
+        padding: 6px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-carousel">
+    <img src="/static/001.jpg" class="background-img active" />
+    <img src="/static/002.jpg" class="background-img" />
+  </div>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img src="/static/logo.jpeg" alt="Islamic Online" style="height: 40px; margin-right: 10px;"> Islamic Online University Borama
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="/">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="content">
+    <div class="container">
+      <div class="dashboard-section mx-auto">
+        <h1 class="mb-4">Student Dashboard</h1>
+        <div class="level-boxes">
+          <div class="level-box" data-level="beginner">Beginner</div>
+          <div class="level-box" data-level="intermediate">Intermediate</div>
+          <div class="level-box" data-level="upper-intermediate">Upper Intermediate</div>
+          <div class="level-box" data-level="advanced">Advanced</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Islamic Online. All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript: Level Box Click Handler -->
+  <script>
+    document.querySelectorAll('.level-box').forEach(box => {
+      box.addEventListener('click', function() {
+        let level = this.getAttribute('data-level');
+        let userCode = prompt("Enter your code:");
+        
+        if (userCode) {
+          fetch('/verify_code', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ level: level, code: userCode })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.redirect) {
+              window.location.href = data.redirect;
+            } else {
+              alert("Incorrect code or unauthorized access.");
+            }
+          });
+        }
+      });
+    });
+  </script>
+  <!-- Bootstrap Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

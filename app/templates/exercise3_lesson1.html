@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive Sentence Ordering Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #1e3c72, #2a5298, #4e54c8);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            background-color: rgba(0, 86, 179, 0.9);
+            color: #fff;
+        }
+        .nav-link {
+            color: white !important;
+            background-color: #28a745;
+            border-radius: 5px;
+            padding: 8px 12px;
+            margin: 0 10px;
+        }
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .sentence-box {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: grab;
+            background-color: #e9ecef;
+        }
+        .sentence-placeholder {
+            border: 2px dashed #ccc;
+            min-height: 40px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .correct {
+            background: #d4edda !important;
+        }
+        footer {
+            background-color: #0056b3;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <span class="navbar-brand text-white">Islamic Online</span>
+        <div>
+            <a href="home" class="btn btn-success">Home</a>
+            <a href="unit1" class="btn btn-success">Back Lesson</a>
+            <a href="login" class="btn btn-success">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container my-4">
+    <h3 class="text-center mb-4">Drag & Drop Sentences into Correct Order</h3>
+
+    <div id="quiz"></div>
+    <button class="btn btn-primary mt-3" onclick="checkOrder()">Check Answers</button>
+    <p id="result" class="mt-3"></p>
+</div>
+
+<footer class="mt-auto text-center py-3 bg-primary text-white">
+    &copy; 2025 Islamic Online. All rights reserved.
+</footer>
+
+<script>
+const correctOrder = [
+    "My name is Abdinaasir Mahamed Haamud.",
+    "I am a student at Amoud University, studying Software Engineering in the Faculty of ICT.",
+    "Apart from studies, I enjoy working on projects and gaining real-world experience.",
+    "My goal is to become a skilled software developer and create innovative solutions.",
+    "Technology has always fascinated me, and I love building websites and applications.",
+    "I spend most of my time learning new programming languages and improving my coding skills.",
+    "I believe that with effort and passion, I can achieve my dreams.",
+    "In my free time, I often participate in coding competitions and workshops.",
+    "I regularly collaborate with classmates to enhance my teamwork skills.",
+    "I believe continuous learning is key to staying relevant in technology.",
+    "Solving real problems with technology motivates me to study harder.",
+    "I always seek feedback to improve myself professionally and personally.",
+    "Balancing my academic life and hobbies helps me maintain a productive lifestyle.",
+    "In future, I hope to contribute positively to my community through technology.",
+    "I am determined and confident about achieving my dreams with persistence and dedication."
+];
+
+let dragged;
+
+function renderQuiz(){
+    const shuffled = [...correctOrder].sort(()=>Math.random()-0.5);
+    document.getElementById("quiz").innerHTML = shuffled.map((sentence,i)=>`
+        <div class="sentence-placeholder" ondragover="event.preventDefault();" ondrop="drop(event)">
+            <div class="draggable" draggable="true" ondragstart="drag(event)">${sentence}</div>
+        </div>
+    `).join("");
+}
+
+function drag(e){ dragged = e.target; }
+
+document.addEventListener("dragstart", (e) => {
+    if (e.target.classList.contains("draggable")) {
+        dragged = e.target;
+    }
+});
+
+document.addEventListener("dragover", (e) => {
+    e.preventDefault();
+});
+
+document.addEventListener("drop", (e) => {
+    if (e.target.classList.contains("sentence-placeholder")) {
+        e.preventDefault();
+        const from = dragged.parentNode;
+        const to = e.target;
+        if (to.classList.contains("sentence-placeholder")){
+            [dragged.textContent, to.textContent] = [to.textContent, dragged.textContent];
+        }
+    }
+});
+
+function checkOrder(){
+    let score=0;
+    document.querySelectorAll('.sentence-placeholder').forEach((el,i)=>{
+        if(el.textContent===correctOrder[i]){
+            el.classList.add('correct');
+            score++;
+        }else{
+            el.classList.remove('correct');
+        }
+    });
+    document.getElementById('result').textContent=`You got ${score} out of ${correctOrder.length} correct.`;
+}
+
+window.onload = () => {
+    renderQuiz();
+};
+</script>
+</body>
+</html>

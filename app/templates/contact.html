@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us - Islamic Online</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    /* Global Animated Gradient Background */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Arial', sans-serif;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .background-carousel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .background-carousel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      transition: opacity 1s ease-in-out;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      background-color: rgba(0, 86, 179, 0.9);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      animation: fadeDown 0.8s ease-out;
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .navbar-brand {
+      font-weight: bold;
+      color: #fff !important;
+    }
+    .nav-link {
+      color: #fff !important;
+      background-color: #28a745;
+      border-radius: 5px;
+      padding: 8px 12px;
+      margin: 0 5px;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .nav-link:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+
+    /* Content and Contact Section */
+    .content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 15px;
+  }
+
+  .social-icon img {
+      width: 40px;
+      height: 40px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .social-icon:hover img {
+      transform: scale(1.2);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+    .contact-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      animation: fadeInUp 1s ease-out;
+      max-width: 600px;
+      width: 100%;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .contact-section h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+    .form-control {
+      border-radius: 10px;
+      padding: 12px 15px;
+      transition: box-shadow 0.3s ease;
+    }
+    .form-control:focus {
+      box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+    }
+    .btn-success {
+      background: linear-gradient(45deg, #1abc9c, #16a085);
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .btn-success:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Footer Styles */
+    footer {
+      background-color: rgba(0, 86, 179, 0.9);
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 576px) {
+      .contact-section {
+        padding: 30px 20px;
+      }
+      .nav-link {
+        margin: 0 3px;
+        padding: 6px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-carousel">
+    <img src="/static/001.jpg" class="background-img active" />
+    <img src="/static/002.jpg" class="background-img" />
+  </div>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img src="/static/logo.jpeg" alt="Islamic Online" style="height: 40px; margin-right: 10px;"> Islamic Online
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contact Section -->
+  <div class="content">
+    <div class="container">
+      <div class="contact-section mx-auto">
+        <h1>Contact Us</h1>
+        <form action="/send_message" method="POST" class="mt-4">
+          <div class="mb-3">
+            <label for="name" class="form-label">Your Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Your Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+          </div>
+          <div class="mb-3">
+            <label for="message" class="form-label">Your Message</label>
+            <textarea class="form-control" id="message" name="message" rows="5" placeholder="Enter your message" required></textarea>
+          </div>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-success">Send Message</button>
+          </div>
+        </form>
+        <h3 class="text-center mt-4">Follow Us</h3>
+        <div class="social-links text-center">
+            <a href="https://www.facebook.com/share/14vuXMPfHY/" target="_blank" class="social-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+            </a>
+            <a href="mailto:islamiconlineuniversityborama@gmail.com" target="_blank" class="social-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" alt="Gmail">
+            </a>
+            <a href="https://wa.me/252633253947" target="_blank" class="social-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+            </a>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Islamic Online. All rights reserved.</p>
+  </footer>
+
+  <!-- Bootstrap Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

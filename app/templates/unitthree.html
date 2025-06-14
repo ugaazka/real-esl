@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unit One Lessons</title>
+  <!-- Bootstrap 5 CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <!-- Animate.css for animations -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+  <style>
+    /* Global Styles */
+    body {
+      background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding-bottom: 60px; /* for footer spacing */
+    }
+    h2, h3 {
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Navigation Bar */
+    .navbar {
+      background: linear-gradient(90deg, #0056b3, #007bff);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    .navbar-brand,
+    .nav-link {
+      color: #fff !important;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    .nav-link:hover {
+      color: #ffc107 !important;
+    }
+
+    /* Lesson Container */
+    .lesson-container {
+      margin-top: 40px;
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+    }
+    .lesson-video-container {
+      flex: 1;
+      position: relative;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .lesson-video {
+      width: 100%;
+      max-width: 800px;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+    .lesson-video:hover {
+      transform: scale(1.02);
+    }
+    .exercise-container,
+    .exam-container {
+      flex: 0 0 250px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    .exercise-container h3,
+    .exam-container h3 {
+      border-bottom: 2px solid #007bff;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+    .exercise-btn,
+    .exam-btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      text-align: center;
+      border-radius: 5px;
+      color: #fff;
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .exercise-btn {
+      background-color: #007bff;
+    }
+    .exercise-btn:hover {
+      background-color: #0056b3;
+      transform: translateY(-3px);
+    }
+    .exam-btn {
+      background-color: #28a745;
+    }
+    .exam-btn:hover {
+      background-color: #1e7e34;
+      transform: translateY(-3px);
+    }
+    .disabled-btn {
+      background-color: #6c757d !important;
+      cursor: not-allowed;
+    }
+    .next-btn {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 18px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .next-btn:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+
+    /* Footer */
+    footer {
+      background: #0056b3;
+      color: #fff;
+      text-align: center;
+      padding: 15px 0;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .lesson-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .exercise-container,
+      .exam-container {
+        flex: 1 1 100%;
+        max-width: 500px;
+      }
+      .lesson-video-container {
+        max-width: 800px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand animate__animated animate__fadeInLeft" href="#">
+        <img src="/static/logo.jpeg" alt="Islamic Online" style="height: 40px; margin-right: 10px;" />
+        Islamic Online
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link animate__animated animate__fadeInDown" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link animate__animated animate__fadeInDown" href="/about">About</a></li>
+          <li class="nav-item"><a class="nav-link animate__animated animate__fadeInDown" href="/contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link animate__animated animate__fadeInDown" href="/profile">Profile</a></li>
+          <li class="nav-item"><a class="nav-link animate__animated animate__fadeInDown" href="/login">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Lesson Section -->
+  <div class="container lesson-container animate__animated animate__fadeInUp">
+    <!-- Exercises -->
+    <div class="exercise-container">
+      <h3>Exercises</h3>
+      <!-- Static fallback links (optional) -->
+      <a href="quiz_dynamic" class="exercise-btn">Exercise One</a>
+      <a href="quiz_dynamic" class="exercise-btn">Exercise Two</a>
+      <a href="quiz_dynamic" class="exercise-btn">Exercise Three</a>
+      <div id="exercise-list"></div>
+    </div>
+
+    <!-- Lesson Video -->
+    <div class="lesson-video-container">
+      <h2 id="lesson-title">Lesson One</h2>
+      <video class="lesson-video" controls id="lesson-video">
+        <source src="" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <button class="next-btn disabled-btn" id="nextBtn" onclick="attemptNextLesson()">Next</button>
+    </div>
+
+    <!-- Exams -->
+    <div class="exam-container">
+      <h3>Exams</h3>
+      <div id="exam-list"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Islamic Online. All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript: Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Main Script -->
+  <script>
+    let unit = 1;             // Current unit
+    let level = "beginner";   // This can be changed dynamically or from session
+    let currentLesson = 0;    // Which lesson index we are on
+    let lessons = [];         // Will store the array of lessons from the backend
+
+    // 1) Load lessons from backend
+    function loadLessons() {
+      fetch(`/get_lessons/${level}/${unit}`)
+        .then(response => response.json())
+        .then(data => {
+          console.log("Fetched lessons:", data);
+          lessons = data;
+          if (lessons.length > 0) {
+            displayLesson(currentLesson);
+          } else {
+            console.log("No lessons found for this unit/level.");
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching lessons:", error);
+        });
+    }
+
+    // 2) Display a single lesson by index
+    function displayLesson(index) {
+      if (index >= lessons.length) return;
+      
+      let lesson = lessons[index];
+      // Lesson title
+      document.getElementById("lesson-title").innerText = lesson.lesson_title || "Lesson";
+      // Video
+      let sourceElem = document.getElementById("lesson-video").querySelector("source");
+      sourceElem.src = lesson.video_url || "";
+      document.getElementById("lesson-video").load();
+
+      // Exercises
+      let exerciseList = document.getElementById("exercise-list");
+      exerciseList.innerHTML = "";
+      lesson.exercises.forEach(ex => {
+        let btn = document.createElement("a");
+        btn.className = "exercise-btn";
+        btn.innerText = ex.title || "Exercise";
+
+        // If you want PDF, set btn.href = ex.exercise_url; btn.target = "_blank";
+        btn.href = "#";
+        
+        // Mark complete when clicked
+        btn.onclick = function(e) {
+          e.preventDefault();
+          completeExercise(ex.id);
+        };
+        exerciseList.appendChild(btn);
+      });
+
+      // Exams
+      let examList = document.getElementById("exam-list");
+      examList.innerHTML = "";
+      lesson.exams.forEach(exam => {
+        let examBtn = document.createElement("a");
+        examBtn.className = "exam-btn";
+        examBtn.innerText = exam.title || "Exam";
+        examBtn.href = exam.exam_url || "#";
+        examBtn.target = "_blank";
+        examList.appendChild(examBtn);
+      });
+
+      checkCompletion();
+    }
+
+    // 3) Mark exercise complete
+    function completeExercise(exerciseId) {
+      // If there's a server route, call it:
+      fetch("/mark_exercise_complete", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ exercise_id: exerciseId })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          alert(data.message);
+          // store in sessionStorage
+          sessionStorage.setItem("exercise_" + exerciseId, true);
+          checkCompletion();
+        }
+      })
+      .catch(error => {
+        console.error("Error marking exercise complete:", error);
+      });
+    }
+
+    // 4) Check if all exercises done -> enable Next
+    function checkCompletion() {
+      let lesson = lessons[currentLesson];
+      let totalExercises = lesson.exercises.length;
+      let completedCount = 0;
+
+      lesson.exercises.forEach(ex => {
+        if (sessionStorage.getItem("exercise_" + ex.id)) {
+          completedCount++;
+        }
+      });
+
+      if (completedCount === totalExercises) {
+        document.getElementById("nextBtn").classList.remove("disabled-btn");
+      }
+    }
+
+    // 5) Attempt Next => must finish exercises
+    function attemptNextLesson() {
+      let lesson = lessons[currentLesson];
+      let totalExercises = lesson.exercises.length;
+      let completedCount = 0;
+
+      lesson.exercises.forEach(ex => {
+        if (sessionStorage.getItem("exercise_" + ex.id)) {
+          completedCount++;
+        }
+      });
+
+      if (completedCount === totalExercises) {
+        nextLesson();
+      } else {
+        alert("Please complete all exercises before proceeding.");
+      }
+    }
+
+    // 6) Go next lesson or done
+    function nextLesson() {
+      currentLesson++;
+      if (currentLesson < lessons.length) {
+        displayLesson(currentLesson);
+        document.getElementById("nextBtn").classList.add("disabled-btn");
+      } else {
+        alert("You have completed all lessons for this unit!");
+      }
+    }
+
+    // On page load
+    document.addEventListener("DOMContentLoaded", loadLessons);
+  </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us - Islamic Online University</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #e0f7fa, #fff);
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background: linear-gradient(90deg, #0056b3, #007bff);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-brand {
+      color: #fff !important;
+      font-weight: 700;
+    }
+    .nav-link {
+      color: #fff !important;
+      margin: 0 8px;
+      font-weight: 500;
+      transition: transform 0.3s ease;
+    }
+    .nav-link:hover {
+      transform: scale(1.1);
+    }
+    .nav-link {
+      color: white !important;
+      background-color: #28a745;
+      border-radius: 5px;
+      padding: 8px 12px;
+      margin: 0 5px;
+      transition: all 0.3s ease-in-out;
+    }
+    .nav-link:hover {
+      text-decoration: underline;
+      background-color: darkgreen;
+      transform: scale(1.1);
+    }
+
+    /* Content and Quiz Section Styling */
+    .content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .quiz-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      animation: fadeInUp 1s ease-out;
+      max-width: 800px;
+      width: 100%;
+      margin: 20px 0;
+    }
+
+  /* Content Container */
+  .content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .quiz-section {
+    background: rgba(255,255,255,0.95);
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    max-width: 800px;
+    width: 100%;
+  }
+    .hero-section {
+      position: relative;
+      height: 70vh;
+      overflow: hidden;
+    }
+    .carousel-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+    .hero-content {
+      position: absolute;
+      z-index: 2;
+      text-align: center;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      padding: 20px;
+    }
+    .hero-content h1 {
+      font-size: 3rem;
+      font-weight: 700;
+    }
+    .about-section {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 40px;
+      margin: -60px auto 60px auto;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      position: relative;
+      text-align: center;
+    }
+    .about-section h2 {
+      font-weight: 700;
+      color: #0056b3;
+    }
+    footer {
+      background-color: #0056b3;
+      color: #fff;
+      text-align: center;
+      padding: 20px 10px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg animate__animated animate__fadeInDown">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img src="/static/logo.jpeg" alt="Islamic Online" style="height: 40px; margin-right: 10px;" />
+        Islamic Online University Borama
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero-section">
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="/static/001.jpg" alt="About Image 1" />
+        </div>
+        <div class="carousel-item">
+          <img src="/static/002.jpg" alt="About Image 2" />
+        </div>
+      </div>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content animate__animated animate__zoomIn">
+      <h1>About Islamic Online University Borama</h1>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="about-section animate__animated animate__fadeInUp">
+      <h2 class="text-center">Who We Are</h2>
+      <p class="lead">The International Online University (IOU), formerly known as the Islamic Online University, was founded by Dr. Bilal Philips in 2007. Our mission is to provide accessible, affordable, and high-quality education to students worldwide, aiming to change the Muslim nation and the world through appropriate, Islamized education.</p>
+      <p>We offer a variety of undergraduate and graduate programs, including Islamic Studies, Education, and more, all designed to cater to the diverse needs of our global student body.</p>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Islamic Online University. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

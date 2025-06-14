@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Exam Results{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5 exam-results-container">
+    <!-- Circular Score Display -->
+    <div class="progress-circle mx-auto" style="width: 150px; height: 150px; position: relative;">
+        <svg width="150" height="150" viewBox="0 0 36 36" class="circular-chart">
+            <path class="circle-bg" d="M18 2.0845a15.9155 15.9155 0 1 1 0 31.831a15.9155 15.9155 0 1 1 0-31.831"/>
+            <path class="circle" d="M18 2.0845a15.9155 15.9155 0 1 1 0 31.831a15.9155 15.9155 0 1 1 0-31.831" 
+                stroke-dasharray="{{ (score / total) * 100 }}, 100" />
+        </svg>
+        <div class="score-percentage">
+            <h2>{{ (score / total) * 100 }}%</h2>
+        </div>
+    </div>
+
+    <!-- Four Statistic Boxes -->
+    <div class="row mt-4 stat-boxes">
+        <div class="col-md-3 col-sm-6">
+            <div class="box bg-light p-3 animated-box">
+                <h4>Total Questions</h4>
+                <p>{{ total }}</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="box bg-light p-3 animated-box">
+                <h4>Questions Attempted</h4>
+                <p>{{ attempted }}</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="box bg-light p-3 animated-box">
+                <h4>Correct Answers</h4>
+                <p>{{ score }}</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="box bg-light p-3 animated-box">
+                <h4>Incorrect Answers</h4>
+                <p>{{ total - score }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buttons to Toggle Content -->
+    <div class="mt-4">
+        <button class="btn btn-primary mx-2 animated-button" onclick="showSection('score-section')">Score</button>
+        <button class="btn btn-warning mx-2 animated-button" onclick="showSection('incorrect-section')">Missing Questions</button>
+        <button class="btn btn-success mx-2 animated-button" onclick="showSection('all-section')">Questions &amp; Answers</button>
+    </div>
+
+    <!-- Sections to Display Content -->
+    <div class="mt-4 section-content" id="score-section" style="display: none;">
+        <h3 class="text-info">Your Performance</h3>
+        <p class="lead">You scored <strong>{{ score }}</strong> out of <strong>{{ total }}</strong>.</p>
+    </div>
+
+    <div class="mt-4 section-content" id="incorrect-section" style="display: none;">
+        <h3 class="text-warning">Questions You Missed</h3>
+        <ul class="list-group">
+            {% for result in results %}
+            {% if not result.correct %}
+            <li class="list-group-item list-group-item-danger animated-item">
+                <strong>Question {{ loop.index }}:</strong> {{ result.question }}<br>
+                <strong>Your Answer:</strong> {{ result.user_answer }}<br>
+                <strong>Correct Answer:</strong> {{ result.correct_answer }}
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="mt-4 section-content" id="all-section" style="display: none;">
+        <h3 class="text-success">All Questions &amp; Answers</h3>
+        <ul class="list-group">
+            {% for result in results %}
+            <li class="list-group-item animated-item {% if result.correct %}list-group-item-success{% else %}list-group-item-danger{% endif %}">
+                <strong>Question {{ loop.index }}:</strong> {{ result.question }}<br>
+                <strong>Your Answer:</strong> {{ result.user_answer }}<br>
+                <strong>Correct Answer:</strong> {{ result.correct_answer }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+function showSection(sectionId) {
+    // Hide all sections first
+    document.querySelectorAll('.section-content').forEach(section => {
+        section.style.display = 'none';
+    });
+    // Then show the chosen section
+    document.getElementById(sectionId).style.display = 'block';
+}
+</script>
+
+<style>
+  /* Animated Gradient Background */
+  body {
+    background: linear-gradient(45deg, #1e3c72, #2a5298, #4e54c8);
+    background-size: 600% 600%;
+    animation: gradientBG 15s ease infinite;
+  }
+  @keyframes gradientBG {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Circular Chart Styling */
+  .circular-chart {
+    transform: rotate(-90deg);
+  }
+  .circle-bg {
+    fill: none;
+    stroke: #eee;
+    stroke-width: 3.8;
+  }
+  .circle {
+    fill: none;
+    stroke: #00acc1;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    animation: progress 1s ease-out forwards;
+  }
+  @keyframes progress {
+    0% { stroke-dasharray: 0, 100; }
+    100% { /* final value set inline via jinja */ }
+  }
+  .score-percentage h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+  }
+
+  /* Animations for Boxes and Buttons */
+  .animated-box {
+    animation: fadeIn 1s ease-out;
+  }
+  .animated-button {
+    animation: bounceIn 1s ease;
+  }
+  .animated-item {
+    animation: slideIn 0.8s ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes bounceIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Enhanced Container Animation */
+  .exam-results-container {
+    animation: fadeIn 1.2s ease;
+  }
+</style>
+{% endblock %}
