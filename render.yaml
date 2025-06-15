@@ -2,10 +2,9 @@ services:
   - type: web
     name: real-esl-app
     env: python
-    rootDir: .
+    rootDir: app
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app.main:app"
+    startCommand: "gunicorn main:app"
     envVars:
       - key: FLASK_ENV
         value: production
-    autoDeploy: true
