@@ -1,0 +1,232 @@
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SelectField, SubmitField
+from wtforms.validators import DataRequired, Email, Length, EqualTo
+from flask_wtf.csrf import CSRFProtect
+from pymongo import MongoClient
+from bson.objectid import ObjectId
+from datetime import datetime
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your-very-secret-key-here'  # Change this!
+csrf = CSRFProtect(app)
+
+# MongoDB setup
+client = MongoClient('mongodb://localhost:27017/')
+db = client['school_management']
+users_collection = db['users']
+activity_collection = db['activity']
+
+class AdminAccessForm(FlaskForm):
+    access_code = StringField('Access Code', validators=[DataRequired()])
+    submit = SubmitField('Enter Admin Panel')
+
+class RegistrationForm(FlaskForm):
+    name = StringField('Full Name', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    level = SelectField('Level', choices=[
+        ('beginner', 'Beginner'),
+        ('intermediate', 'Intermediate'),
+        ('advanced', 'Advanced')
+    ], validators=[DataRequired()])
+    submit = SubmitField('Register Student')
+
+class EditUserForm(FlaskForm):
+    name = StringField('Full Name', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    level = SelectField('Level', choices=[
+        ('beginner', 'Beginner'),
+        ('intermediate', 'Intermediate'),
+        ('advanced', 'Advanced')
+    ], validators=[DataRequired()])
+    status = SelectField('Status', choices=[
+        ('active', 'Active'),
+        ('inactive', 'Inactive'),
+        ('suspended', 'Suspended')
+    ], validators=[DataRequired()])
+    submit = SubmitField('Save Changes')
+
+def log_activity(action, details):
+    activity_collection.insert_one({
+        'action': action,
+        'details': details,
+        'timestamp': datetime.now(),
+        'admin': session.get('admin_email', 'Unknown')
+    })
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin_dashboard():
+    if not session.get('admin_verified'):
+        return redirect(url_for('admin_login'))
+    
+    form = request.args
+    level_filter = form.get('level', 'all')
+    page = int(form.get('page', 1))
+    per_page = 10
+    
+    query = {} if level_filter == 'all' else {'level': level_filter}
+    total_users = users_collection.count_documents(query)
+    users = list(users_collection.find(query).skip((page-1)*per_page).limit(per_page))
+    
+    # Get stats for cards
+    stats = {
+        'total': users_collection.count_documents({}),
+        'beginner': users_collection.count_documents({'level': 'beginner'}),
+        'intermediate': users_collection.count_documents({'level': 'intermediate'}),
+        'advanced': users_collection.count_documents({'level': 'advanced'})
+    }
+    
+    # Get recent activity
+    recent_activity = list(activity_collection.find().sort('timestamp', -1).limit(3))
+    
+    return render_template('admin_dashboard.html', 
+                         users=users, 
+                         current_filter=level_filter,
+                         stats=stats,
+                         recent_activity=recent_activity,
+                         pagination={
+                             'page': page,
+                             'per_page': per_page,
+                             'total': total_users,
+                             'pages': (total_users // per_page) + (1 if total_users % per_page else 0)
+                         })
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if session.get('admin_verified'):
+        return redirect(url_for('admin_dashboard'))
+    
+    form = AdminAccessForm()
+    if form.validate_on_submit():
+        if form.access_code.data == "UGAAS0011":
+            session['admin_verified'] = True
+            session['admin_email'] = 'admin@school.com'  # Replace with actual admin email
+            log_activity('Login', 'Admin logged in')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Invalid access code. Please try again.', 'danger')
+            log_activity('Failed Login', f'Failed attempt with code: {form.access_code.data}')
+    
+    return render_template('admin_login.html', form=form)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if not session.get('admin_verified'):
+        return redirect(url_for('admin_login'))
+    
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        email = form.email.data.strip().lower()
+        
+        if users_collection.find_one({"email": email}):
+            flash('Email already registered!', 'danger')
+            log_activity('Registration Failed', f'Duplicate email: {email}')
+        else:
+            user_data = {
+                "name": form.name.data.strip(),
+                "email": email,
+                "password": form.password.data,
+                "level": form.level.data,
+                "status": "active",
+                "role": "student",
+                "created_at": datetime.now()
+            }
+            users_collection.insert_one(user_data)
+            flash('Student registered successfully!', 'success')
+            log_activity('New Registration', f'Student: {form.name.data} ({form.level.data})')
+            return redirect(url_for('register'))
+    
+    return render_template('register.html', form=form)
+
+@app.route('/admin/user/<user_id>')
+def view_user(user_id):
+    if not session.get('admin_verified'):
+        return redirect(url_for('admin_login'))
+    
+    user = users_collection.find_one({'_id': ObjectId(user_id)})
+    if not user:
+        flash('User not found', 'danger')
+        return redirect(url_for('admin_dashboard'))
+    
+    log_activity('View User', f'Viewed user: {user["name"]}')
+    return render_template('view_user.html', user=user)
+
+@app.route('/admin/edit/<user_id>', methods=['GET', 'POST'])
+def edit_user(user_id):
+    if not session.get('admin_verified'):
+        return redirect(url_for('admin_login'))
+    
+    user = users_collection.find_one({'_id': ObjectId(user_id)})
+    if not user:
+        flash('User not found', 'danger')
+        return redirect(url_for('admin_dashboard'))
+    
+    form = EditUserForm()
+    
+    if form.validate_on_submit():
+        users_collection.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': {
+                'name': form.name.data,
+                'email': form.email.data,
+                'level': form.level.data,
+                'status': form.status.data
+            }}
+        )
+        flash('User updated successfully', 'success')
+        log_activity('User Updated', f'Updated user: {form.name.data}')
+        return redirect(url_for('view_user', user_id=user_id))
+    
+    # Pre-populate form for GET request
+    if request.method == 'GET':
+        form.name.data = user['name']
+        form.email.data = user['email']
+        form.level.data = user['level']
+        form.status.data = user.get('status', 'active')
+    
+    return render_template('edit_user.html', form=form, user=user)
+
+@app.route('/admin/delete/<user_id>')
+def delete_user(user_id):
+    if not session.get('admin_verified'):
+        return redirect(url_for('admin_login'))
+    
+    user = users_collection.find_one({'_id': ObjectId(user_id)})
+    if user:
+        users_collection.delete_one({'_id': ObjectId(user_id)})
+        flash('User deleted successfully', 'success')
+        log_activity('User Deleted', f'Deleted user: {user["name"]}')
+    else:
+        flash('User not found', 'danger')
+    
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/message/<user_id>', methods=['GET', 'POST'])
+def message_user(user_id):
+    if not session.get('admin_verified'):
+        return redirect(url_for('admin_login'))
+    
+    user = users_collection.find_one({'_id': ObjectId(user_id)})
+    if not user:
+        flash('User not found', 'danger')
+        return redirect(url_for('admin_dashboard'))
+    
+    if request.method == 'POST':
+        message = request.form.get('message')
+        # Here you would implement actual messaging functionality
+        flash(f'Message sent to {user["name"]}', 'success')
+        log_activity('Message Sent', f'To: {user["name"]}, Message: {message[:20]}...')
+        return redirect(url_for('view_user', user_id=user_id))
+    
+    return render_template('message_user.html', user=user)
+
+@app.route('/admin/logout')
+def admin_logout():
+    log_activity('Logout', 'Admin logged out')
+    session.clear()
+    return redirect(url_for('admin_login'))
+
+if __name__ == '__main__':
+    app.run(debug=True)

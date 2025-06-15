@@ -2,7 +2,6 @@ services:
   - type: web
     name: real-esl-app
     env: python
-    rootDir: app
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn main:app"
     envVars:
